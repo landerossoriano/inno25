@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <title>InnovatecNM 2025 - Tec Jerez</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
       background-color: #f8f9fa;
-      text-align: center;
       padding-top: 50px;
+      text-align: center;
     }
 
     .semaforo {
       width: 150px;
-      margin: 0 auto;
+      margin: 20px auto;
       padding: 20px;
       background: #333;
       border-radius: 15px;
@@ -30,45 +31,52 @@
     }
 
     .activo {
-      opacity: 1;
+      opacity: 1 !important;
     }
 
     #tiempo {
       font-size: 5rem;
-      margin-top: 30px;
+      margin: 30px 0;
       font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  
-  <img src="./Logo.png" alt="innovalogo" width="300" height="200">
-  <br><br>
+  <img src="./Logo.png" alt="Logo InnovatecNM" width="300" height="200">
   <h2>Fase local - ITS Jerez</h2>
   <hr>
+
   <div class="semaforo">
     <div id="rojo" class="luz bg-danger"></div>
     <div id="ambar" class="luz bg-warning"></div>
     <div id="verde" class="luz bg-success"></div>
   </div>
 
-  <div id="tiempo">07:00</div>
+  <div id="tiempo">00:00</div>
+
+  <div class="mb-4">
+    <button id="btn6" class="btn btn-primary me-2">Iniciar 6 minutos</button>
+    <button id="btn5" class="btn btn-secondary">Iniciar 5 minutos</button>
+  </div>
 
   <script>
-    let tiempo = 420; // 7 minutos en segundos
+    let tiempo = 0;
+    let intervalo = null;
 
     const rojo = document.getElementById("rojo");
     const ambar = document.getElementById("ambar");
     const verde = document.getElementById("verde");
     const tiempoTexto = document.getElementById("tiempo");
+    const btn6 = document.getElementById("btn6");
+    const btn5 = document.getElementById("btn5");
 
     function actualizarLuz() {
       rojo.classList.remove("activo");
       ambar.classList.remove("activo");
       verde.classList.remove("activo");
 
-      if (tiempo > 120) {
+      if (tiempo > 60) {
         verde.classList.add("activo");
       } else if (tiempo > 0) {
         ambar.classList.add("activo");
@@ -83,22 +91,28 @@
       return `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
     }
 
-    function iniciarTemporizador() {
+   function iniciarTemporizador(segundos) {
+  clearInterval(intervalo);
+  tiempo = segundos;
+  actualizarLuz();
+  tiempoTexto.textContent = formatoTiempo(tiempo);
+
+  intervalo = setInterval(() => {
+    tiempo--;
+    actualizarLuz();
+    tiempoTexto.textContent = formatoTiempo(tiempo);
+
+    if (tiempo <= 0) {
+      clearInterval(intervalo);
       actualizarLuz();
-      tiempoTexto.textContent = formatoTiempo(tiempo);
-
-      const intervalo = setInterval(() => {
-        tiempo--;
-        actualizarLuz();
-        tiempoTexto.textContent = formatoTiempo(tiempo);
-
-        if (tiempo <= 0) {
-          clearInterval(intervalo);
-        }
-      }, 1000);
     }
+  }, 1000);
+}
 
-    iniciarTemporizador();
+   
+
+    btn6.addEventListener('click', () => iniciarTemporizador(360));
+    btn5.addEventListener('click', () => iniciarTemporizador(300));
   </script>
 
 </body>
